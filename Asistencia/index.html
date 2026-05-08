@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Control de Asistencia QR</title>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <link rel="stylesheet" href="css/styles.css">
+
+  <style>
+    /* ── Modal de selección de grupo ── */
+    #pantalla-seleccion {
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 24, 39, 0.85);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+
+    .sel-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 36px 40px;
+      max-width: 520px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+    }
+
+    .sel-card h2 {
+      font-size: 1.4rem;
+      color: #111827;
+      margin-bottom: 4px;
+    }
+
+    .sel-fecha {
+      color: #6b7280;
+      font-size: 0.88rem;
+      text-transform: capitalize;
+      margin-bottom: 20px;
+    }
+
+    .sel-instruccion {
+      font-size: 0.95rem;
+      color: #374151;
+      font-weight: 600;
+      margin-bottom: 22px;
+    }
+
+    .sel-grados {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .sel-columna {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-width: 140px;
+    }
+
+    .sel-grado-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border-bottom: 2px solid #e5e7eb;
+      padding-bottom: 6px;
+      margin-bottom: 2px;
+    }
+
+    .btn-grupo {
+      padding: 13px 10px;
+      background: #1d4ed8;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+      box-shadow: 0 2px 8px rgba(29,78,216,0.25);
+    }
+    .btn-grupo:hover  { background: #2563eb; transform: translateY(-2px); box-shadow: 0 6px 18px rgba(29,78,216,0.35); }
+    .btn-grupo:active { transform: translateY(0); }
+
+    /* ── Badge de grupo activo en header ── */
+    .header-derecha {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .grupo-badge {
+      background: #2563eb;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 5px 14px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+    .btn-cambiar {
+      padding: 5px 12px;
+      background: #6b7280;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-cambiar:hover { background: #4b5563; }
+
+    /* ── Colores de fila según estado ── */
+    tr.fila-retardo td { background: #fffbeb !important; }
+    tr.fila-falta   td { background: #fef2f2 !important; }
+  </style>
+</head>
+
+<body>
+
+  <!-- ══════════════════════════════════════════
+    MODAL DE SELECCIÓN DE GRUPO
+    Aparece encima de la app hasta elegir grupo
+  ══════════════════════════════════════════ -->
+  <div id="pantalla-seleccion">
+    <div class="sel-card">
+      <h2>Control de Asistencia QR</h2>
+      <p class="sel-fecha" id="fecha-modal"></p>
+      <p class="sel-instruccion">Selecciona tu grupo para comenzar</p>
+
+      <div class="sel-grados">
+
+        <div class="sel-columna">
+          <span class="sel-grado-label">1° Grado</span>
+          <button class="btn-grupo" onclick="seleccionarGrupo('201')">Grupo 201</button>
+          <button class="btn-grupo" onclick="seleccionarGrupo('202')">Grupo 202</button>
+        </div>
+
+        <div class="sel-columna">
+          <span class="sel-grado-label">4° Grado</span>
+          <button class="btn-grupo" onclick="seleccionarGrupo('401')">Grupo 401</button>
+          <button class="btn-grupo" onclick="seleccionarGrupo('403')">Grupo 403</button>
+        </div>
+
+        <div class="sel-columna">
+          <span class="sel-grado-label">6° Grado</span>
+          <button class="btn-grupo" onclick="seleccionarGrupo('601')">Grupo 601</button>
+          <button class="btn-grupo" onclick="seleccionarGrupo('602')">Grupo 602</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+    ENCABEZADO
+  ══════════════════════════════════════════ -->
+  <header>
+    <div>
+      <h1>Control de Asistencia QR</h1>
+      <p class="subtitulo" id="fecha-hoy"></p>
+    </div>
+    <div class="header-derecha">
+      <span class="grupo-badge" id="grupo-activo-label"></span>
+      <button class="btn-cambiar" onclick="cambiarGrupo()">Cambiar grupo</button>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════
+    APP PRINCIPAL
+  ══════════════════════════════════════════ -->
+  <div class="contenedor">
+
+    <!-- COLUMNA IZQUIERDA: Escáner -->
+    <div class="panel">
+      <h2>Escáner QR</h2>
+      <div id="camara"></div>
+      <div class="botones-escaner">
+        <button id="btn-iniciar" class="btn btn-verde" onclick="iniciarEscaner()">
+          Iniciar cámara
+        </button>
+        <button id="btn-detener" class="btn btn-rojo" onclick="detenerEscaner()" style="display:none;">
+          Detener cámara
+        </button>
+      </div>
+      <div id="mensaje-estado" class="mensaje info">
+        Presiona "Iniciar cámara" para comenzar.
+      </div>
+    </div>
+
+    <!-- COLUMNA DERECHA: Último registro -->
+    <div class="panel">
+      <h2>Último registro</h2>
+      <div id="tarjeta-alumno">
+        <p style="color:#9ca3af; font-size:0.9rem;">
+          Aquí aparecerán los datos del alumno al escanear su QR.
+        </p>
+      </div>
+    </div>
+
+    <!-- FILA INFERIOR: Tabla de asistencia -->
+    <div class="panel panel-tabla">
+      <div class="encabezado-tabla">
+        <h2 style="margin-bottom:0; border:none;">Lista de asistencia del día</h2>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <span class="contador-badge">
+            Registrados: <span id="contador">0</span>
+          </span>
+          <button class="btn btn-azul" onclick="exportarCSV()">
+            Exportar a Excel
+          </button>
+        </div>
+      </div>
+
+      <div class="tabla-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>No.</th>
+              <th>N° Control</th>
+              <th>Nombre</th>
+              <th>Grupo</th>
+              <th>Taller</th>
+              <th>Hora de entrada</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody id="cuerpo-tabla"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- fin .contenedor -->
+
+  <!-- Scripts -->
+  <script src="js/Estudiantes.js"></script>
+  <script src="js/Asistencia.js"></script>
+  <script src="js/Scaner.js"></script>
+
+  <script>
+    const fechaStr = new Date().toLocaleDateString("es-MX", {
+      weekday: "long", year: "numeric", month: "long", day: "numeric"
+    });
+    document.getElementById("fecha-hoy").textContent   = fechaStr;
+    document.getElementById("fecha-modal").textContent = fechaStr;
+
+    function cambiarGrupo() {
+      if (confirm("¿Deseas cambiar de grupo? Los registros actuales se perderán.")) {
+        location.reload();
+      }
+    }
+  </script>
+
+</body>
+</html>

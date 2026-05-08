@@ -1,0 +1,380 @@
+/* ============================================================
+   ARCHIVO: styles.css
+   FUNCIÓN: Define el diseño visual de toda la aplicación.
+            Está dividido en secciones: base, encabezado,
+            escáner, tarjeta de resultado, tabla y mensajes.
+   ============================================================ */
+
+/* --- BASE Y TIPOGRAFÍA ------------------------------------ */
+* {
+  margin        : 0;
+  padding       : 0;
+  box-sizing    : border-box;
+}
+
+body {
+  font-family   : 'Segoe UI', Arial, sans-serif;
+  background    : #f0f2f5;
+  color         : #1a1a2e;
+  min-height    : 100vh;
+}
+
+/* --- ENCABEZADO ------------------------------------------- */
+header {
+  background    : #1a1a2e;
+  color         : white;
+  padding       : 18px 32px;
+  display       : flex;
+  align-items   : center;
+  gap           : 16px;
+}
+
+header h1 {
+  font-size     : 1.4rem;
+  font-weight   : 600;
+  letter-spacing: 0.5px;
+}
+
+header .subtitulo {
+  font-size     : 0.85rem;
+  opacity       : 0.65;
+  margin-top    : 2px;
+}
+
+/* --- LAYOUT PRINCIPAL ------------------------------------- */
+.contenedor {
+  max-width     : 960px;
+  margin        : 32px auto;
+  padding       : 0 16px;
+  display       : grid;
+  grid-template-columns: 1fr 1fr;
+  gap           : 24px;
+}
+
+/* En pantallas pequeñas, apilar las columnas */
+@media (max-width: 700px) {
+  .contenedor {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --- TARJETAS / PANELES ----------------------------------- */
+.panel {
+  background    : white;
+  border-radius : 12px;
+  padding       : 24px;
+  box-shadow    : 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.panel h2 {
+  font-size     : 1rem;
+  font-weight   : 600;
+  margin-bottom : 16px;
+  color         : #1a1a2e;
+  border-bottom : 2px solid #f0f2f5;
+  padding-bottom: 10px;
+}
+
+/* --- SECCIÓN DEL ESCÁNER ---------------------------------- */
+#camara {
+  width         : 100%;
+  border-radius : 8px;
+  overflow      : hidden;
+  background    : #000;
+  min-height    : 250px;
+}
+
+.botones-escaner {
+  display       : flex;
+  gap           : 10px;
+  margin-top    : 14px;
+}
+
+/* --- BOTONES ---------------------------------------------- */
+.btn {
+  padding       : 10px 22px;
+  border        : none;
+  border-radius : 8px;
+  font-size     : 0.95rem;
+  font-weight   : 500;
+  cursor        : pointer;
+  transition    : opacity 0.2s;
+}
+
+.btn:hover {
+  opacity       : 0.85;
+}
+
+.btn-verde {
+  background    : #16a34a;
+  color         : white;
+}
+
+.btn-rojo {
+  background    : #dc2626;
+  color         : white;
+  display       : none;   /* oculto hasta que la cámara encienda */
+}
+
+.btn-azul {
+  background    : #2563eb;
+  color         : white;
+}
+
+/* --- MENSAJES DE ESTADO ----------------------------------- */
+.mensaje {
+  margin-top    : 12px;
+  padding       : 10px 14px;
+  border-radius : 8px;
+  font-size     : 0.92rem;
+  font-weight   : 500;
+  min-height    : 40px;
+}
+
+.mensaje.exito {
+  background    : #dcfce7;
+  color         : #15803d;
+  border-left   : 4px solid #16a34a;
+}
+
+.mensaje.error {
+  background    : #fee2e2;
+  color         : #b91c1c;
+  border-left   : 4px solid #dc2626;
+}
+
+.mensaje.info {
+  background    : #dbeafe;
+  color         : #1d4ed8;
+  border-left   : 4px solid #2563eb;
+}
+
+/* --- TARJETA DE ALUMNO REGISTRADO ------------------------- */
+.tarjeta-exito {
+  background    : #f0fdf4;
+  border        : 2px solid #16a34a;
+  border-radius : 10px;
+  padding       : 20px;
+  text-align    : center;
+  animation     : aparecer 0.3s ease;
+}
+
+@keyframes aparecer {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+.tarjeta-icono {
+  font-size     : 2.5rem;
+  color         : #16a34a;
+  margin-bottom : 8px;
+}
+
+.tarjeta-exito h2 {
+  font-size     : 1.2rem;
+  color         : #15803d;
+  border        : none;
+  margin-bottom : 8px;
+}
+
+.dato-control {
+  font-size     : 0.95rem;
+  color         : #374151;
+  margin-bottom : 4px;
+}
+
+.dato-grupo {
+  font-size     : 0.88rem;
+  color         : #6b7280;
+  margin-bottom : 4px;
+}
+
+.dato-hora {
+  font-size     : 1rem;
+  color         : #1a1a2e;
+  margin-top    : 8px;
+}
+
+/* --- TABLA DE ASISTENCIA ---------------------------------- */
+.panel-tabla {
+  grid-column   : 1 / -1;  /* ocupa las dos columnas del grid */
+}
+
+.encabezado-tabla {
+  display       : flex;
+  justify-content: space-between;
+  align-items   : center;
+  margin-bottom : 14px;
+}
+
+.contador-badge {
+  background    : #1a1a2e;
+  color         : white;
+  border-radius : 20px;
+  padding       : 4px 14px;
+  font-size     : 0.88rem;
+}
+
+.tabla-scroll {
+  overflow-x    : auto;
+}
+
+table {
+  width         : 100%;
+  border-collapse: collapse;
+  font-size     : 0.9rem;
+}
+
+thead th {
+  background    : #1a1a2e;
+  color         : white;
+  padding       : 10px 14px;
+  text-align    : left;
+  font-weight   : 500;
+}
+
+tbody tr {
+  border-bottom : 1px solid #f0f2f5;
+  transition    : background 0.15s;
+}
+
+tbody tr:hover {
+  background    : #f8fafc;
+}
+
+tbody td {
+  padding       : 10px 14px;
+  color         : #374151;
+}
+
+/* Primera fila (más reciente) resaltada en verde suave */
+tbody tr:first-child {
+  background    : #f0fdf4;
+}
+
+tbody tr:first-child td {
+  color         : #15803d;
+  font-weight   : 500;
+
+
+/* ============================================================
+   AGREGAR AL FINAL DE styles.css
+   Estilos para: pantalla de selección de grupo,
+   badge de grupo activo, y colores de estado en tabla.
+============================================================ */
+
+/* ---------- PANTALLA DE SELECCIÓN DE GRUPO ---------- */
+#pantalla-seleccion {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #111827 0%, #1e3a5f 100%);
+  padding: 24px;
+}
+
+.seleccion-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 40px 48px;
+  max-width: 560px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.seleccion-card h1 {
+  font-size: 1.6rem;
+  color: #111827;
+  margin-bottom: 6px;
+}
+
+.seleccion-subtitulo {
+  color: #6b7280;
+  font-size: 0.9rem;
+  text-transform: capitalize;
+  margin-bottom: 24px;
+}
+
+.seleccion-instruccion {
+  font-size: 1rem;
+  color: #374151;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+.grupos-grid {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.grupo-seccion {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  min-width: 130px;
+}
+
+.grupo-grado {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding-bottom: 4px;
+  border-bottom: 2px solid #e5e7eb;
+  width: 100%;
+  text-align: center;
+}
+
+.btn-grupo {
+  width: 100%;
+  padding: 14px 10px;
+  background: #1d4ed8;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+.btn-grupo:hover  { background: #2563eb; transform: translateY(-2px); }
+.btn-grupo:active { transform: translateY(0); }
+
+/* ---------- BADGE DE GRUPO ACTIVO EN HEADER ---------- */
+.header-grupo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.grupo-badge {
+  background: #2563eb;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 5px 16px;
+  border-radius: 20px;
+}
+
+.btn-cambiar-grupo {
+  font-size: 0.8rem;
+  padding: 5px 12px;
+  background: #6b7280;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.btn-cambiar-grupo:hover { background: #4b5563; }
+
+/* ---------- COLORES DE FILA SEGÚN ESTADO ---------- */
+tr.fila-retardo td { background: #fffbeb; }
+tr.fila-falta   td { background: #fef2f2; }
+
+
+}
